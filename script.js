@@ -40,6 +40,9 @@ let weather ={
 
         // changes text of the 'windspeed' class
         document.querySelector(".windspeed").innerText = "Wind speed: " + speed + " km/h";
+
+        //change background to city specific picture
+        document.body.style.backgroundImage = "url('https://source.unsplash.com/1920x1080/?" + description +"')"
     },
 
     //function to search for weather form the input in the search bar
@@ -59,3 +62,37 @@ document.querySelector(".search-bar").addEventListener("keyup", function(){
         weather.search();
     }
 });
+
+
+//geolocation api set up
+const http = new XMLHttpRequest()
+
+document.querySelector("#share").addEventListener("click", () =>{
+    findMyCoord()
+})
+
+function findMyCoord(){
+    if (navigator.geolocation){
+        navigator.geolocation.getCurrentPosition
+        ((position) =>{
+            const BigdataCloudAPI = `https://api-bdc.net/data/reverse-geocode?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en&key=bdc_9a3b011457c24cb99c43b1aed63c52de`
+            getAPI(BigdataCloudAPI)
+        },
+        (err) => {
+            alert(err.message)
+        })
+    }else{
+        alert("Geolocation not supported by your browser")
+    }
+}
+
+function getAPI(BigdataCloudAPI){
+    http.open("GET", BigdataCloudAPI)
+    http.send()
+    http.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            const results = JSON.parse(this.responseText)
+            weather.getWeather(results.locality)
+        }
+    }
+}

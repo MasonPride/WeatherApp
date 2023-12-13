@@ -27,7 +27,7 @@ body{
     justify-content: center;
 }
 
-button{
+.search button{
     margin: .5em;
     border-radius: 50%;
     border: none;
